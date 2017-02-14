@@ -1,13 +1,16 @@
 ﻿using UnityEditor.Callbacks;
 using UnityEditor;
+#if UNITY_IOS
 using UnityEditor.iOS.Xcode;
+#endif
 using System.IO;
 
-public class ImagePickerFyberPostProcessBuild
+public class ImagePickerPostProcessBuild
 {
 	[PostProcessBuild]
 	public static void OnPostProcessBuild(BuildTarget target, string path)
 	{
+		#if UNITY_IOS
 		if (target != BuildTarget.iOS) {
 			return;
 		}
@@ -18,5 +21,6 @@ public class ImagePickerFyberPostProcessBuild
 		PlistElementDict rootDict = plist.root;
 		rootDict.SetString("NSPhotoLibraryUsageDescription", "For picking photos");
 		plist.WriteToFile(plistPath);
+		#endif
 	}
 }

@@ -147,3 +147,8 @@ extern "C" void Stopiccot_ImagePicker_SelectPhoto(IOSTakePhotoCallback callback,
     
     [UnityGetGLViewController() presentViewController:imagePickerController animated:true completion:nil];
 }
+
+extern "C" void Stopiccot_ImagePicker_SaveImageToCameraRoll(const char* path) {
+    UIImage* image = [[UIImage alloc] initWithContentsOfFile:[NSString stringWithFormat:@"%s", path]];
+    UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil);
+}

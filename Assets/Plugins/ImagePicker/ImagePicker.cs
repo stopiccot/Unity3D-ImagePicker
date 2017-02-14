@@ -17,6 +17,9 @@ namespace Stopiccot {
 		[DllImport("__Internal")]
 		private static extern void Stopiccot_ImagePicker_SelectPhoto(IOSTakePhotoCallback callback, bool allowEditing);
 
+		[DllImport("__Internal")]
+		private static extern void Stopiccot_ImagePicker_SaveImageToCameraRoll(string path);
+
 		[MonoPInvokeCallback(typeof(IOSTakePhotoCallback))]
 		protected static void Callback(string path) {
 			completionSource.SetResult(path);
@@ -75,6 +78,14 @@ namespace Stopiccot {
 			#endif
 
 			return completionSource.Task;
+		}
+
+		public static void SaveToCameraRoll(string path) {
+			#if UNITY_IOS && !UNITY_EDITOR
+			Stopiccot_ImagePicker_SaveImageToCameraRoll(path);
+			#elif UNITY_ANDROID && !UNITY_EDITOR
+			//...
+			#endif
 		}
 	}
 }
