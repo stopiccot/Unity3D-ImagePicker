@@ -187,7 +187,7 @@ public class ImagePickerModule implements ActivityResultListener {
 
     public void launchImageLibrary(Callback callback) {
         Log.d("ImagePickerPlugin", "launchImageLibrary - 1");
-        launchCameraCallback = callback;
+        launchImageLibraryCallback = callback;
 
         Log.d("ImagePickerPlugin", "launchImageLibrary - 2");
 
