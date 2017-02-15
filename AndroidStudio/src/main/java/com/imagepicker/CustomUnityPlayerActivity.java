@@ -16,29 +16,22 @@ public class CustomUnityPlayerActivity extends UnityPlayerActivity
     }
 
     @Override protected void onCreate(Bundle savedInstanceState) {
-        Log.d("CustomActivity", "onCreate");
         instance = this;
         super.onCreate(savedInstanceState);
     }
 
-    private final CopyOnWriteArraySet<ActivityEventListener> mActivityEventListeners = new CopyOnWriteArraySet<>();
+    private final CopyOnWriteArraySet<ActivityResultListener> mActivityResultListeners = new CopyOnWriteArraySet<>();
 
-    public void addActivityEventListener(ActivityEventListener listener) {
-        Log.d("CustomActivity", "addActivityEventListener");
-        mActivityEventListeners.add(listener);
+    public void addActivityResultListener(ActivityResultListener listener) {
+        mActivityResultListeners.add(listener);
     }
 
-    public void removeActivityEventListener(ActivityEventListener listener) {
-        Log.d("CustomActivity", "removeActivityEventListener");
-        mActivityEventListeners.remove(listener);
+    public void removeActivityResultListener(ActivityResultListener listener) {
+        mActivityResultListeners.remove(listener);
     }
 
     @Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.d("CustomActivity", "onActivityResult");
-        Log.d("CustomActivity", "Number of listeners: " + mActivityEventListeners.size());
-
-        for (ActivityEventListener listener : mActivityEventListeners) {
-            Log.d("CustomActivity", "sending onActivityResult callback");
+        for (ActivityResultListener listener : mActivityResultListeners) {
             listener.onActivityResult(requestCode, resultCode, data);
         }
     }

@@ -19,7 +19,7 @@ import java.io.File;
 import java.util.UUID;
 import java.io.IOException;
 
-public class ImagePickerModule implements ActivityEventListener {
+public class ImagePickerModule implements ActivityResultListener {
 
     static final int REQUEST_LAUNCH_IMAGE_CAPTURE = 13001;
     static final int REQUEST_LAUNCH_IMAGE_LIBRARY = 13002;
@@ -31,7 +31,7 @@ public class ImagePickerModule implements ActivityEventListener {
     public static ImagePickerModule getInstance() {
         if (instance == null) {
             instance = new ImagePickerModule();
-            CustomUnityPlayerActivity.getInstance().addActivityEventListener(instance);
+            CustomUnityPlayerActivity.getInstance().addActivityResultListener(instance);
         }
 
         return instance;

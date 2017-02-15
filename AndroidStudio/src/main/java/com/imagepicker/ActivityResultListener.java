@@ -3,7 +3,7 @@ package com.imagepicker;
 import android.app.Activity;
 import android.content.Intent;
 
-public interface ActivityEventListener {
+public interface ActivityResultListener {
 
   /**
    * Called when host (activity/service) receives an {@link Activity#onActivityResult} call.
