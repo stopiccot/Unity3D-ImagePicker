@@ -27,11 +27,11 @@ namespace Stopiccot {
 		#endif
 
 		#if UNITY_ANDROID && !UNITY_EDITOR
-		public class AndroidTakePhotoCallback : AndroidJavaProxy
+		public class AndroidImagePickerCallback : AndroidJavaProxy
 		{
 			protected TaskCompletionSource<string> completionSource = null;
 
-			public AndroidTakePhotoCallback(TaskCompletionSource<string> completionSource) : base("com.imagepicker.ImagePickerModule$Callback") {
+			public AndroidImagePickerCallback(TaskCompletionSource<string> completionSource) : base("com.imagepicker.ImagePickerModule$Callback") {
 				this.completionSource = completionSource;
 			}
 
@@ -53,12 +53,12 @@ namespace Stopiccot {
 			Stopiccot_ImagePicker_TakePhoto(Callback, allowsEditing);
 			#elif UNITY_ANDROID && !UNITY_EDITOR
 			using (AndroidJavaObject imagePickerClass = new AndroidJavaClass("com.imagepicker.ImagePickerModule")) {
-			using (AndroidJavaClass unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer")) {
-				var currentActivityObject = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
-				var imagePickerInstance = imagePickerClass.CallStatic<AndroidJavaObject>("getInstance");
-				imagePickerInstance.Call("setCurrentActivity", currentActivityObject);
-				imagePickerInstance.Call("launchCamera", new AndroidTakePhotoCallback(completionSource));
-			}
+				using (AndroidJavaClass unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer")) {
+					var currentActivityObject = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
+					var imagePickerInstance = imagePickerClass.CallStatic<AndroidJavaObject>("getInstance");
+					imagePickerInstance.Call("setCurrentActivity", currentActivityObject);
+					imagePickerInstance.Call("launchCamera", new AndroidImagePickerCallback(completionSource));
+				}
 			}
 			#else
 			completionSource.SetResult(UnityEditor.EditorUtility.OpenFilePanel("Select image", "", "png,jpg,jpeg"));
@@ -72,7 +72,14 @@ namespace Stopiccot {
 			#if UNITY_IOS && !UNITY_EDITOR
 			Stopiccot_ImagePicker_SelectPhoto(Callback, allowsEditing);
 			#elif UNITY_ANDROID && !UNITY_EDITOR
-			//...
+			using (AndroidJavaObject imagePickerClass = new AndroidJavaClass("com.imagepicker.ImagePickerModule")) {
+				using (AndroidJavaClass unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer")) {
+					var currentActivityObject = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
+					var imagePickerInstance = imagePickerClass.CallStatic<AndroidJavaObject>("getInstance");
+					imagePickerInstance.Call("setCurrentActivity", currentActivityObject);
+					imagePickerInstance.Call("launchImageLibrary", new AndroidImagePickerCallback(completionSource));
+				}
+			}
 			#else
 			completionSource.SetResult(UnityEditor.EditorUtility.OpenFilePanel("Select image", "", "png,jpg,jpeg"));
 			#endif

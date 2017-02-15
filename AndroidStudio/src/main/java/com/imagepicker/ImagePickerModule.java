@@ -46,6 +46,7 @@ public class ImagePickerModule implements ActivityResultListener {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         Log.d("ImagePickerPlugin", "onActivityResult");
+
         if (requestCode == REQUEST_LAUNCH_IMAGE_CAPTURE) {
             Log.d("ImagePickerPlugin", "REQUEST_LAUNCH_IMAGE_CAPTURE");
 
@@ -55,6 +56,15 @@ public class ImagePickerModule implements ActivityResultListener {
             Log.d("ImagePickerPlugin", mCameraCaptureFileURI.toString());
 
             launchCameraCallback.actuallyCall(mCameraCaptureFileURI.toString());
+        }
+
+        if (requestCode == REQUEST_LAUNCH_IMAGE_LIBRARY) {
+            Log.d("ImagePickerPlugin", "REQUEST_LAUNCH_IMAGE_LIBRARY");
+
+            Log.d("ImagePickerPlugin", "uri 1");
+            Log.d("ImagePickerPlugin", data.getData().toString());
+
+            launchImageLibraryCallback.actuallyCall(data.getData().toString());
         }
     }
 
@@ -171,5 +181,59 @@ public class ImagePickerModule implements ActivityResultListener {
         );
 
         return image;
+    }
+
+    protected Callback launchImageLibraryCallback;
+
+    public void launchImageLibrary(Callback callback) {
+        Log.d("ImagePickerPlugin", "launchImageLibrary - 1");
+        launchCameraCallback = callback;
+
+        Log.d("ImagePickerPlugin", "launchImageLibrary - 2");
+
+        if (currentActivity == null) {
+            Log.d("ImagePickerPlugin", "activity is null");
+            return;
+        }
+
+        Log.d("ImagePickerPlugin", currentActivity.toString());
+
+        Log.d("ImagePickerPlugin", "launchImageLibrary - 3");
+
+        if (!permissionsCheck(currentActivity)) {
+            Log.d("ImagePickerPlugin", "no permissions");
+            return;
+        }
+
+        Log.d("ImagePickerPlugin", "launchImageLibrary - 4");
+
+        int requestCode;
+        Intent libraryIntent;
+        boolean pickVideo = false;
+        if (pickVideo) {
+            requestCode = REQUEST_LAUNCH_VIDEO_LIBRARY;
+            libraryIntent = new Intent(Intent.ACTION_PICK);
+            libraryIntent.setType("video/*");
+        } else {
+            requestCode = REQUEST_LAUNCH_IMAGE_LIBRARY;
+            libraryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        }
+
+        Log.d("ImagePickerPlugin", "launchImageLibrary - 5");
+
+        if (libraryIntent.resolveActivity(currentActivity.getPackageManager()) == null) {
+            Log.d("ImagePickerPlugin", "failed to resolve activity");
+            return;
+        }
+
+        Log.d("ImagePickerPlugin", "launchImageLibrary - 6");
+
+        try {
+            currentActivity.startActivityForResult(libraryIntent, requestCode);
+        } catch (ActivityNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        Log.d("ImagePickerPlugin", "launchImageLibrary - 7");
     }
 }
