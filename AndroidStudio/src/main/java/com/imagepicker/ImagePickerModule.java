@@ -63,8 +63,10 @@ public class ImagePickerModule implements ActivityResultListener {
 
             Log.d("ImagePickerPlugin", "uri 1");
             Log.d("ImagePickerPlugin", data.getData().toString());
+            Log.d("ImagePickerPlugin", "uri 2");
+            Log.d("ImagePickerPlugin", getRealPathFromURI(data.getData()));
 
-            launchImageLibraryCallback.actuallyCall(data.getData().toString());
+            launchImageLibraryCallback.actuallyCall(getRealPathFromURI(data.getData()));
         }
     }
 
@@ -89,6 +91,22 @@ public class ImagePickerModule implements ActivityResultListener {
             return false;
         }
         return true;
+    }
+
+
+    private String getRealPathFromURI(Uri uri) {
+        String result;
+        String[] projection = {MediaStore.Images.Media.DATA};
+        Cursor cursor = currentActivity.getContentResolver().query(uri, projection, null, null, null);
+        if (cursor == null) { // Source is Dropbox or other similar local file path
+            result = uri.getPath();
+        } else {
+            cursor.moveToFirst();
+            int idx = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+            result = cursor.getString(idx);
+            cursor.close();
+        }
+        return result;
     }
 
     private Uri mCameraCaptureURI;
